@@ -1,0 +1,7 @@
+version: "3.8"
+services:
+  fastapi-app:
+    build: .
+    platform: linux/arm64
+    ports:
+      - "7001:7001"
