@@ -2,13 +2,13 @@
 
 This repository contains the deployment of a **ResNet50-based** object detection model trained in the previous task. The model is served using **FastAPI** and containerized with **Docker** for cross-platform compatibility.
 
-## 🚀 Features
+##  Features
 - **Model:** PyTorch-based ResNet50 (Fine-tuned for car detection).
 - **Service:** High-performance inference API built with FastAPI.
 - **Docker:** Optimized image configured to run on ARM-based MacOS devices.
 - **Output:** Prediction results are returned in structured JSON format.
 
-## 📁 Project Structure
+##  Project Structure
 - `main.py`: FastAPI application logic and inference pipeline.
 - `model.py`: Model architecture definition.
 - `model_weights.pth`: Trained model weights (state dictionary).
@@ -16,7 +16,7 @@ This repository contains the deployment of a **ResNet50-based** object detection
 - `docker-compose.yml`: Orchestration to run the service on port 7001.
 - `requirements.txt`: Necessary Python dependencies.
 
-## 🛠️ Installation & Usage
+##  Installation & Usage
 
 Ensure you have **Docker Desktop** installed on your machine. Follow these steps to run the service:
 
