@@ -8,19 +8,17 @@ from model import ObjectDetector
 
 app = FastAPI(title="DigiNova Object Detection API")
 
-# 1. CİHAZ VE MODEL AYARLARI
-# Sunucu ortamında (Docker) GPU olmayabileceği için CPU kullanıyoruz
+
 DEVICE = torch.device("cpu")
 
-# Model mimarisini oluştur (Colab'deki ile aynı: 2 sınıf - Arka plan ve Araba)
+
 model = ObjectDetector(num_classes=2)
 
-# 2. MODEL AĞIRLIKLARINI YÜKLEME
-# Dockerfile içinde WORKDIR /app dediğimiz için dosya yolu tam olarak budur
+
 MODEL_PATH = "/app/model_weights.pth"
 
 if not os.path.exists(MODEL_PATH):
-    # Eğer üstteki yol hata verirse yerel dizini dene (Hata ayıklama için)
+    # Eğer üstteki yol hata verirse hata ayıklama için
     MODEL_PATH = "model_weights.pth"
 
 try:
@@ -31,7 +29,7 @@ try:
 except Exception as e:
     print(f"HATA: Model yüklenemedi! Detay: {e}")
 
-# 3. GÖRSEL ÖN İŞLEME (Colab'deki adımların aynısı)
+
 transform = transforms.Compose([
     transforms.ToPILImage(),
     transforms.Resize((224, 224)),
@@ -50,7 +48,7 @@ async def predict(file: UploadFile = File(...)):
         raise HTTPException(status_code=400, detail="Lütfen geçerli bir görsel dosyası yükleyin.")
 
     try:
-        # Dosyayı oku
+        
         contents = await file.read()
         nparr = np.frombuffer(contents, np.uint8)
         img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
@@ -60,18 +58,18 @@ async def predict(file: UploadFile = File(...)):
             
         img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         
-        # Modele hazırlık
+        
         img_tensor = transform(img_rgb).unsqueeze(0).to(DEVICE)
         
-        # Çıkarım (Inference)
+       
         with torch.no_grad():
             _, class_logits = model(img_tensor)
             
-        # Sonuçları işle (Softmax ile olasılığa çevir)
+        
         probabilities = torch.nn.functional.softmax(class_logits, dim=1).squeeze()
         max_prob, label_idx = torch.max(probabilities, dim=0)
         
-        # Sınıf isimleri
+        
         class_names = {0: "Arka Plan / Obje Yok", 1: "Araba"}
         predicted_label = class_names.get(label_idx.item(), "Bilinmeyen")
         
